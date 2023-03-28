@@ -100,14 +100,10 @@ render_config_file() {
     mkdir -p $DEFAULT_LOG_DIR
     export DEFAULT_LOG_DIR
     DEFAULT_IP=$(ip -o route get 1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p')
-    echo "Which IP address should the snapshot agent service bind to?"
-    read -p "[defaults to $DEFAULT_IP]: " BIND_ADDRESS
-    BIND_ADDRESS=${BIND_ADDRESS:-$DEFAULT_IP}
+    BIND_ADDRESS=$DEFAULT_IP
     export BIND_ADDRESS
 
-    echo "Which port should the snapshot agent service bind to?"
-    read -p "[defaults to 9999]: " PORT
-    PORT=${PORT:-9999}
+    PORT=9999
     export PORT
 
     SNAPSTORE_DEVICE_UUID=$(blkid $SNAPSTORE_DEVICE -o export | grep ^UUID=)
@@ -232,14 +228,6 @@ if [ -z "$CA_PORT" ]; then
     CA_PORT=9000
 fi
 
-if [ -z "$WEB_ROOT" ]; then
-    read -p "Is this machine a web server host? [y/n] " CONFIRMATION
-    if [ "$CONFIRMATION" = "y" ]; then
-        echo "In case this machine is a web server host, SSL certificate generation will require the web server's root, used to host ACME requests."
-        read -p "Please provide the web server's root path [defaults to /var/www/html]: " WEB_ROOT
-        WEB_ROOT=${WEB_ROOT:-"/var/www/html"}
-    fi
-fi
 
 install_prereqs
 if ! [[ -f $VEEAMSNAP_MODULE_PATH ]] ; then
